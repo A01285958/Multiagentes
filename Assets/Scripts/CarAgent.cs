@@ -7,7 +7,7 @@ public class CarAgent : MonoBehaviour
         NorthToSouth,
         SouthToNorth,
         WestToEast,
-        EastToWest
+        EastToWest,
     }
 
     [Header("Movimiento")]
