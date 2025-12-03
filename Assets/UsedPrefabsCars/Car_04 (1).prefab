@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2102982471215883329}
   - component: {fileID: 1155176895331742876}
   - component: {fileID: 5975792988597232961}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Car_04 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,6 +157,7 @@ MonoBehaviour:
   rb: {fileID: 1155176895331742876}
   stopThreshold: 0.1
   safeDistance: 3
+  collisionRadius: 0.8
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64

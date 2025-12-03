@@ -19,13 +19,12 @@ public class CarAgent : MonoBehaviour
     public float stopThreshold = 0.1f;
 
     [Header("Evitar colisiones")]
-    public float safeDistance = 3f;
-    public LayerMask obstacleMask;    // capa de los carros
+    public float safeDistance = 3f;      // hasta dónde mira al frente
+    public float collisionRadius = 0.2f; // radio del “cono” de detección
+    public LayerMask obstacleMask;       // capa de carros (opcional)
 
     // La pone StopZone (trigger)
     public bool InStopZone = false;
-
-    // NUEVO: indica que ya cruzó definitivamente su línea de alto
     public bool HasPassedStopZone = false;
 
     public bool IsStopped
@@ -41,6 +40,10 @@ public class CarAgent : MonoBehaviour
     {
         if (rb == null)
             rb = GetComponent<Rigidbody>();
+
+        // por si el rigidbody está en un hijo del prefab
+        if (rb == null)
+            rb = GetComponentInChildren<Rigidbody>();
     }
 
     void FixedUpdate()
@@ -53,17 +56,12 @@ public class CarAgent : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
         }
 
-        // 1) Consultar semáforo
+        // 1) Consultar semáforo (esto ya te funcionaba)
         var controller = QLearningTrafficLightController.Instance;
         QLearningTrafficLightController.LightColor light =
             controller != null ? controller.GetLightForDirection(direction)
                                : QLearningTrafficLightController.LightColor.Green;
 
-        // IMPORTANTE:
-        // Solo nos detenemos si:
-        // - estamos en la StopZone
-        // - el semáforo está en rojo
-        // - AÚN NO hemos cruzado esa StopZone
         if (!HasPassedStopZone && InStopZone &&
             light == QLearningTrafficLightController.LightColor.Red)
         {
@@ -71,14 +69,18 @@ public class CarAgent : MonoBehaviour
             return;
         }
 
-        // 2) Evitar colisión: raycast al frente
+        // 2) Evitar colisiones con OTROS CarAgent (no por capa solamente)
         LayerMask maskToUse = (obstacleMask.value != 0) ? obstacleMask : Physics.AllLayers;
 
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up * 0.5f,
-                            dir, out hit, safeDistance, maskToUse))
+
+        if (Physics.SphereCast(origin, collisionRadius,
+                               dir, out hit, safeDistance,
+                               maskToUse, QueryTriggerInteraction.Ignore))
         {
-            if (hit.rigidbody == null || hit.rigidbody != rb)
+            var otherCar = hit.collider.GetComponentInParent<CarAgent>();
+            if (otherCar != null && otherCar != this)
             {
                 rb.linearVelocity = Vector3.zero;
                 return;
