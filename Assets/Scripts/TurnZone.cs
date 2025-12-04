@@ -31,6 +31,8 @@ public class TurnZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Este log se debe ver SIEMPRE que cualquier collider entre
+        Debug.Log($"[TurnZone] Entró algo: {other.name}", this);
         // El collider puede estar en un hijo del coche
         CarAgent car = other.GetComponent<CarAgent>();
         if (car == null)
