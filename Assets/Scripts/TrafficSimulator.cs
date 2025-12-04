@@ -24,12 +24,23 @@ public class TrafficSimulator : MonoBehaviour
     public Transform southSpawn; //Abajo (Sur -> Norte)
     public Transform eastSpawn; //Derecha (Este -> Oeste)
     public Transform westSpawn; //Izquierda (Oeste -> Este)
+    public Transform farLeft; //El punto de Interseccion 5
+    public Transform Left5;
+    public Transform Right5_1;
+    public Transform Right5_2;
+
 
     [Header("Datos de demanda por calle")]
     public ApproachData northData;
     public ApproachData southData;
     public ApproachData eastData;
     public ApproachData westData;
+    public ApproachData farLeftData;
+    public ApproachData Left5Data;
+    public ApproachData Right5_1Data;
+    public ApproachData Right5_2Data;
+
+
 
     [Header("Duracion de la simulacion en horas de reloj")]
     public float simulatedHours = 3f;
@@ -54,6 +65,18 @@ public class TrafficSimulator : MonoBehaviour
 
         if (westSpawn != null && westData != null)
             StartCoroutine(SpawnFromApproach(westSpawn, CarAgent.MoveDirection.WestToEast, westData));
+
+        if (farLeft != null && farLeftData != null)
+            StartCoroutine(SpawnFromApproach(farLeft, CarAgent.MoveDirection.NorthToSouth, farLeftData));
+        
+        if (Left5 != null && Left5Data != null)
+            StartCoroutine(SpawnFromApproach(Left5, CarAgent.MoveDirection.WestToEast, Left5Data));
+
+        if (Right5_1 != null && Right5_1Data != null)
+            StartCoroutine(SpawnFromApproach(Right5_1, CarAgent.MoveDirection.EastToWest, Right5_1Data));
+
+        if (Right5_2 != null && Right5_2Data != null)
+            StartCoroutine(SpawnFromApproach(Right5_2, CarAgent.MoveDirection.EastToWest, Right5_2Data));
     }
 
     IEnumerator SpawnFromApproach(
@@ -117,7 +140,7 @@ public class TrafficSimulator : MonoBehaviour
         var prefab = carPrefabs[Random.Range(0, carPrefabs.Length)];
         var go = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
 
-        var agent = go.GetComponent<CarAgent>();
+        var agent = go.GetComponent<CarAgent>();;
         if (agent != null)
         {
             agent.direction = dir;

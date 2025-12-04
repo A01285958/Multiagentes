@@ -86,6 +86,8 @@ public class QLearningTrafficLightController : MonoBehaviour
     public TrafficLightVisual southLight;
     public TrafficLightVisual eastLight;
     public TrafficLightVisual westLight;
+    //Semafro de la calle que se integra a la avenida (nuevo cruce)
+    public TrafficLightVisual northMergeLight;
 
     private int currentPhase = 0;   // 0 N, 1 S, 2 E, 3 W
     private int phaseTimer = 0;
@@ -303,10 +305,17 @@ public class QLearningTrafficLightController : MonoBehaviour
 
     void ApplyLights()
     {
-        if (northLight != null) northLight.SetGreen(currentPhase == 0);
-        if (southLight != null) southLight.SetGreen(currentPhase == 1);
-        if (eastLight  != null) eastLight.SetGreen(currentPhase == 2);
-        if (westLight  != null) westLight.SetGreen(currentPhase == 3);
+        bool nGreen = (currentPhase == 0);
+        bool sGreen = (currentPhase == 1);
+        bool eGreen = (currentPhase == 2);
+        bool wGreen = (currentPhase == 3);
+
+        if (northLight != null) northLight.SetGreen(nGreen);
+        if (southLight != null) southLight.SetGreen(sGreen);
+        if (eastLight  != null) eastLight.SetGreen(eGreen);
+        if (westLight  != null) westLight.SetGreen(wGreen);
+
+        if(northMergeLight != null) northMergeLight.SetGreen(sGreen);
     }
 
     int GetQueueLengthForApproach(char approach)
